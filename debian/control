@@ -1,0 +1,29 @@
+Source: fnm
+Section: devel
+Priority: optional
+Maintainer: Robert August Vincent II (Bob) <pillarsdotnet@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+               cargo (>= 1.88) | cargo-1.91,
+               rustc (>= 1.88) | rustc-1.91,
+               help2man,
+               liblzma-dev,
+               pkg-config,
+Standards-Version: 4.7.0
+Homepage: https://github.com/Schniz/fnm
+Rules-Requires-Root: no
+
+Package: fnm
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Recommends: ca-certificates
+Description: fast and simple Node.js version manager
+ fnm (Fast Node Manager) installs Node.js versions and switches between
+ them. It is a single native binary that covers the everyday nvm commands:
+ install, use, default, list, exec and uninstall work as their nvm
+ counterparts, and .nvmrc, .node-version and the package.json engines
+ field are all read.
+ .
+ Shell integration comes from eval "$(fnm env)" in the shell's startup
+ file; with --use-on-cd the Node.js version switches automatically on
+ entering a directory. Completions for bash, zsh and fish are included.

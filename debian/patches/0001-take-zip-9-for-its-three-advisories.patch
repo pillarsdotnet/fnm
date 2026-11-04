@@ -1,0 +1,62 @@
+From: Robert August Vincent II (Bob) <pillarsdotnet@gmail.com>
+Subject: Take zip 9 for its three advisories
+
+zip 2.x, which upstream asks for, is affected by three advisories that
+have no fix in the 2.x series:
+
+ * CVE-2026-115905 (critical): ZipStreamReader extracts using local
+   file header names while ZipArchive trusts the central directory, so
+   a cloaked archive can write a path that inspection did not show.
+   Fixed in 9.0.5.
+ * CVE-2026-115909 (high): ZipArchive::extract reserves a symlink
+   target from the archive's own uncompressed_size, which aborts the
+   process on an impossible capacity. Fixed in 9.0.0.
+ * CVE-2026-115906 (medium): the AES entry reader checks its HMAC only
+   when the data counter reaches zero, so a truncated encrypted entry
+   can return clean EOF unverified. Fixed in 9.0.0.
+
+fnm reaches none of the three: it drives ZipArchive by index itself
+rather than through ZipStreamReader or extract(), and reads no
+encrypted entry. The dependency is updated regardless, so the package
+carries no crate with a known advisory.
+
+zip 9 returns a Result from name() and mangled_name(), both of which
+decode what the archive claims, so the two call sites propagate the
+error like every other failure in extract_into.
+
+Forwarded: not-needed
+Last-Update: 2026-11-04
+
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -18,7 +18,7 @@
+ node-semver = "2.1.0"
+ etcetera = "0.8.0"
+ colored = "2.1.0"
+-zip = "2.1.0"
++zip = "9.0.5"
+ tempfile = "3.10.1"
+ indoc = "2.0.5"
+ log = "0.4.21"
+--- a/src/archive/zip.rs
++++ b/src/archive/zip.rs
+@@ -32,7 +32,9 @@
+ 
+         for i in 0..archive.len() {
+             let mut file = archive.by_index(i)?;
+-            let outpath = path.join(file.mangled_name());
++            // zip 9 made both accessors fallible; the names come straight
++            // from the archive, so a malformed one is an extraction error.
++            let outpath = path.join(file.mangled_name()?);
+ 
+             {
+                 let comment = file.comment();
+@@ -41,7 +43,7 @@
+                 }
+             }
+ 
+-            if file.name().ends_with('/') {
++            if file.name()?.ends_with('/') {
+                 debug!(
+                     "File {} extracted to \"{}\"",
+                     i,

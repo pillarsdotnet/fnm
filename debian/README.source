@@ -1,0 +1,48 @@
+fnm source package
+==================
+
+fnm is third-party upstream (https://github.com/Schniz/fnm); only debian/
+is ours. Two upstream tarballs, both built by debian/make-orig-tarballs.sh
+from an upstream git clone at the release tag:
+
+ * fnm_<ver>.orig.tar.xz: the repository at the tag.
+ * fnm_<ver>.orig-vendor.tar.xz: every crate in Cargo.lock, unpacked to
+   vendor/. Launchpad's builders have no network. Crates that only build
+   for Windows, macOS or WebAssembly are reduced to their Cargo.toml and
+   an empty lib.rs.
+
+debian/patches moves Cargo.toml and Cargo.lock off the released versions
+to clear crate advisories, and the build runs cargo with --frozen, so the
+script applies the series before vendoring: a vendor set made from the
+released lock holds the wrong versions and fails the build. Refreshing the
+lock means regenerating both the vendor tarball and debian/copyright, so
+re-run the script after touching a patch that moves it.
+
+The script also regenerates the vendor/ paragraphs of debian/copyright.
+It takes an upstream clone and a tag, because the tracked part of this tree
+is debian/ and .forgejo/ only - the upstream source beside them is a working
+copy that .gitignore keeps out of git, and it may be absent entirely in a
+fresh clone. Run it from the packaging tree:
+
+  debian/make-orig-tarballs.sh ../dl-fnm/src v<ver>
+
+.forgejo/registry-upload does the same thing in CI, cloning the tag the
+changelog names into a temporary directory, so a release needs no clone on
+disk.
+
+One debian/ serves noble, resolute and stonking. The committed changelog
+entry carries the packaging version alone (<ver>-1~ppaN, UNRELEASED) and
+whatever builds it appends the series: .forgejo/registry-upload for the
+registry, mksrc-series when building for Launchpad. fnm is a compiled
+binary, so each series is built separately - one build cannot serve all
+three the way an Architecture: all package can.
+
+Upstream pins Rust 1.88, which on noble comes from the versioned
+cargo-1.91/rustc-1.91 packages in noble-updates (see debian/rules). CI puts
+that toolchain on PATH for cargo vendor as well as for the build.
+
+Upstream's test suite (cargo test and the e2e tests) downloads Node.js
+releases from nodejs.org, so the package build does not run it; it
+smoke-tests the built binary instead.
+
+ -- Robert August Vincent II (Bob) <pillarsdotnet@gmail.com>  Sat, 18 Oct 2026 22:10:00 -0400

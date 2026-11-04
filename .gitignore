@@ -1,0 +1,23 @@
+# This directory is both the packaging tree and a working copy of upstream's
+# source at the packaged tag. Only debian/ and .forgejo/ are ours, so those
+# are tracked and everything else is ignored: the upstream checkout, the two
+# orig tarballs, and every build artifact.
+/*
+!/.forgejo/
+!/debian/
+!/README.md
+!/.gitignore
+
+# Build artifacts inside debian/.
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/files
+/debian/fnm/
+/debian/fnm.substvars
+/debian/fnm.1
+/debian/fnm.bash
+/debian/fnm.zsh
+/debian/fnm.fish
+/debian/cargo-home/
+/debian/home/
+/debian/patches/.pc/
