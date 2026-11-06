@@ -22,9 +22,11 @@ The script also regenerates the vendor/ paragraphs of debian/copyright.
 It takes an upstream clone and a tag, because the tracked part of this tree
 is debian/ and .forgejo/ only - the upstream source beside them is a working
 copy that .gitignore keeps out of git, and it may be absent entirely in a
-fresh clone. Run it from the packaging tree:
+fresh clone. Clone upstream wherever you like and point the script at it,
+from the packaging tree:
 
-  debian/make-orig-tarballs.sh ../dl-fnm/src v<ver>
+  git clone https://github.com/Schniz/fnm.git /tmp/fnm-src
+  debian/make-orig-tarballs.sh /tmp/fnm-src v<ver>
 
 .forgejo/registry-upload does the same thing in CI, cloning the tag the
 changelog names into a temporary directory, so a release needs no clone on
