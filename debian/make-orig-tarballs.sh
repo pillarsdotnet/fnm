@@ -21,7 +21,8 @@
 # Needs patch(1) as well, to apply debian/patches before vendoring.
 #
 # Usage: debian/make-orig-tarballs.sh <upstream-clone> <tag>
-#    eg: debian/make-orig-tarballs.sh ../dl-fnm/src v1.39.0
+#    eg: git clone https://github.com/Schniz/fnm.git /tmp/fnm-src
+#        debian/make-orig-tarballs.sh /tmp/fnm-src v1.39.0
 set -eu
 
 tree=$(pwd)
