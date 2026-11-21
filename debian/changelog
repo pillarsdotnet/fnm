@@ -1,3 +1,17 @@
+fnm (1.39.0-1~ppa3) UNRELEASED; urgency=medium
+
+  * d/p/0002: refresh the lock again. The ~ppa2 lock still scans clean
+    three weeks on -- no advisory has caught up with it -- but 45 crates
+    had newer semver-compatible releases, so this takes them rather than
+    letting the gap widen until a bump is forced. Notable only for jiff
+    0.2 -> 1.0, nix 0.31 -> 0.32 and lzma-rust2 0.24 -> 0.25, all of
+    which cargo resolved without a manifest change.
+  * Upstream's full test suite passes against the refreshed lock, all 30
+    tests, and the release build is warning-free. trivy reports nothing.
+  * Still 1.39.0: that is upstream's current release.
+
+ -- Robert August Vincent II (Bob) <pillarsdotnet@gmail.com>  Sat, 21 Nov 2026 11:45:00 -0500
+
 fnm (1.39.0-1~ppa2) UNRELEASED; urgency=medium
 
   * Refresh the vendored crate set past 25 advisories. Upstream's
