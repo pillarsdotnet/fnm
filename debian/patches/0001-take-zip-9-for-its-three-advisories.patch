@@ -41,20 +41,20 @@ Last-Update: 2026-11-04
 --- a/src/archive/zip.rs
 +++ b/src/archive/zip.rs
 @@ -32,7 +32,9 @@
- 
+
          for i in 0..archive.len() {
              let mut file = archive.by_index(i)?;
 -            let outpath = path.join(file.mangled_name());
 +            // zip 9 made both accessors fallible; the names come straight
 +            // from the archive, so a malformed one is an extraction error.
 +            let outpath = path.join(file.mangled_name()?);
- 
+
              {
                  let comment = file.comment();
 @@ -41,7 +43,7 @@
                  }
              }
- 
+
 -            if file.name().ends_with('/') {
 +            if file.name()?.ends_with('/') {
                  debug!(
